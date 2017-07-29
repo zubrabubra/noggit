@@ -7,7 +7,7 @@
   <name>Noggit</name>
   <url>http://github.com/yonik/noggit</url>
   <description>Noggit is the world's fastest streaming JSON parser for Java.</description>
-  
+
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
@@ -40,7 +40,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
 
   <dependencies>
     <dependency>
@@ -66,9 +65,77 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
         <version>2.9</version>
-      </plugin>     
+      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+        <id>jmh</id>
+        <dependencies>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-core</artifactId>
+                <version>1.19</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-generator-annprocess</artifactId>
+                <version>1.19</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+        <build>
+          <plugins>
+              <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>build-helper-maven-plugin</artifactId>
+                  <version>1.9.1</version>
+                  <executions>
+                      <execution>
+                          <id>add-test-source</id>
+                          <phase>generate-test-sources</phase>
+                          <goals>
+                              <goal>add-test-source</goal>
+                          </goals>
+                          <configuration>
+                              <sources>
+                                  <source>src/jmh/java</source>
+                              </sources>
+                          </configuration>
+                      </execution>
+                  </executions>
+              </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>exec-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>run-benchmarks</id>
+                  <phase>integration-test</phase>
+                  <goals>
+                    <goal>exec</goal>
+                  </goals>
+                  <configuration>
+                    <classpathScope>test</classpathScope>
+                    <executable>java</executable>
+                    <arguments>
+                      <argument>-classpath</argument>
+                      <classpath/>
+                      <argument>org.openjdk.jmh.Main</argument>
+                      <argument>-prof</argument>
+                      <argument>gc</argument>
+                      <argument>.*</argument>
+                    </arguments>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+    </profile>
+  </profiles>
 
 </project>
 

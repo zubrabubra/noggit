@@ -105,10 +105,10 @@ public class JSONParser {
 
   protected int flags = FLAGS_DEFAULT;
 
-  protected final char[] buf;  // input buffer with JSON text in it
+  protected char[] buf;  // input buffer with JSON text in it
   protected int start;         // current position in the buffer
   protected int end;           // end position in the buffer (one past last valid index)
-  protected final Reader in;   // optional reader to obtain data from
+  protected Reader in;   // optional reader to obtain data from
   protected boolean eof=false; // true if the end of the stream was reached.
   protected long gpos;          // global position = gpos + start
 
@@ -131,6 +131,8 @@ public class JSONParser {
 
   // idea - if someone passes us a CharArrayReader, we could
   // directly use that buffer as it's protected.
+
+  protected JSONParser() {}
 
   public JSONParser(char[] data, int start, int end) {
     this.in = null;
@@ -162,13 +164,13 @@ public class JSONParser {
   }
 
   // temporary output buffer
-  private final CharArr out = new CharArr(64);
+  protected final CharArr out = new CharArr(64);
 
   // We need to keep some state in order to (at a minimum) know if
   // we should skip ',' or ':'.
   private byte[] stack = new byte[16];
-  private int ptr=0;     // pointer into the stack of parser states
-  private byte state=0;  // current parser state
+  protected int ptr=0;     // pointer into the stack of parser states
+  protected byte state=0;  // current parser state
 
   // parser states stored in the stack
   private static final byte DID_OBJSTART =1;  // '{' just read
@@ -178,7 +180,7 @@ public class JSONParser {
   private static final byte DID_MEMVAL =5;    // object member value (map val) just read
 
   // info about value that was just read (or is in the middle of being read)
-  private int valstate;
+  protected int valstate;
 
   // push current parser state (use at start of new container)
   private final void push() {
@@ -439,7 +441,7 @@ public class JSONParser {
 
   private boolean bool; // boolean value read
   private long lval;    // long value read
-  private int nstate;   // current state while reading a number
+  protected int nstate;   // current state while reading a number
   private static final int HAS_FRACTION = 0x01;  // nstate flag, '.' already read
   private static final int HAS_EXPONENT = 0x02;  // nstate flag, '[eE][+-]?[0-9]' already read
 
